@@ -30,7 +30,7 @@ public class TCPProcess {
             while (true) {
                 try {
                     Socket peer = server.accept();
-                    System.out.println("connection established to " + peer.getInetAddress());
+                    System.out.println("connection established to " + peer.getInetAddress().getHostAddress());
                     peers.put(peer.getInetAddress().getHostAddress(), new DataOutputStream(peer.getOutputStream()));
 
                     Thread clientHandler = new Thread(() -> {
