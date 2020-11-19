@@ -41,11 +41,11 @@ public class TCPProcess {
                             dataInputStream = new DataInputStream(peer.getInputStream());
 
                             while ((s = dataInputStream.readUTF()) != null) {
-                                System.out.println("Recipient: " + this.ip + ":" + this.port + " | Sender: " + sender + " | Message: " + s);
+                                System.out.println(sender + ": " + s);
                             }
 
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            System.out.println("Connection lost");
                         }
                     });
 
@@ -60,9 +60,43 @@ public class TCPProcess {
         connectionHandler.start();
     }
 
+    class connectionHandler implements Runnable {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Socket peer = server.accept();
+                    System.out.println("connection established to " + peer.getInetAddress().getHostAddress());
+                    peers.put(peer.getInetAddress().getHostAddress(), new DataOutputStream(peer.getOutputStream()));
+
+                    Thread clientHandler = new Thread(() -> {
+                        String sender = peer.getInetAddress().getHostAddress();
+                        String s;
+                        DataInputStream dataInputStream;
+                        try {
+                            dataInputStream = new DataInputStream(peer.getInputStream());
+
+                            while ((s = dataInputStream.readUTF()) != null) {
+                                System.out.println(sender + ": " + s);
+                            }
+
+                        } catch (Exception e) {
+                            System.out.println("Connection lost");
+                        }
+                    });
+
+                    clientHandler.start();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public boolean addPeer(String ip, int port) {
         try {
-            peers.put(ip, new DataOutputStream(new Socket(ip, port).getOutputStream()));
+            this.peers.put(ip, new DataOutputStream(new Socket(ip, port).getOutputStream()));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -70,7 +104,7 @@ public class TCPProcess {
         }
     }
 
-    public boolean sendMessage(String recipient, String s) {
+    public boolean send(String recipient, String s) {
         try {
             this.peers.get(recipient).writeUTF(s);
             return true;

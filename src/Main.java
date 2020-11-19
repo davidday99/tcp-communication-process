@@ -9,14 +9,14 @@ public class Main {
                 e.printStackTrace();
             }
             p.addPeer("127.0.0.1", 8000);
-            p.sendMessage("127.0.0.1", "Message sent from " + p.ip + ":" + p.port);
+            p.send("127.0.0.1", "Message sent from " + p.ip + ":" + p.port);
         });
 
         Thread t2 = new Thread(() -> {
             TCPProcess p = new TCPProcess("127.0.0.1", 8000);
 
             p.addPeer("127.0.0.1", 5000);
-            p.sendMessage("127.0.0.1", "Message sent from " + p.ip + ":" + p.port);
+            p.send("127.0.0.1", "Message sent from " + p.ip + ":" + p.port);
         });
 
         t1.start();

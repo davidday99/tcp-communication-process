@@ -1,19 +1,28 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class RemoteMain {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        String myIp = "127.0.0.1";
-        String peerIp = "127.0.0.1";
+        String myIp = "192.168.1.29";
+        String peerIp = "192.168.1.55";
 
-        TCPProcess p = new TCPProcess(myIp, 8000);
+        TCPProcess p = new TCPProcess(myIp, 5000);
 
-        try {
-            Thread.sleep(5000);
-        } catch (Exception e) {
-            e.printStackTrace();
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
+        String s;
+
+
+        while (!(s = input.readLine()).equals(""));
+
+        p.addPeer(peerIp, 8000);
+
+        while (!(s = input.readLine()).equals("Close")) {
+            p.send(peerIp, s);
         }
 
-        p.addPeer(peerIp, 5000);
-
-        p.sendMessage(peerIp, "This is a message from " + p.ip);
+        System.exit(0);
     }
 }
